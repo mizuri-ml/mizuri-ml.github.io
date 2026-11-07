@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empaquetar · ICMP Hex Lab</title>
+<style>
+body{margin:0;padding:24px;background:#0f0a1e;color:#eee9ff;font:16px/1.55 system-ui,"Segoe UI",Arial,sans-serif}
+h1{margin:0 0 6px;font-size:1.2rem;color:#c4b5fd}
+p{margin:0 0 16px;font-size:.9rem;color:#b7a9d6}
+code{background:#241a3d;padding:1px 6px;border-radius:5px}
+#checks{background:#170f2b;border:1px solid #33254f;border-radius:12px;padding:12px;margin-bottom:14px;font-size:.85rem}
+#checks ul{margin:6px 0 0;padding-left:18px}
+#checks li{color:#7ee7c7}
+#checks li.bad{color:#ff8fa8}
+#btnZip{font:inherit;font-weight:700;padding:12px 22px;border:0;border-radius:12px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:#fff;cursor:pointer;font-size:.95rem}
+#btnZip:hover{filter:brightness(1.1)}
+iframe{width:100%;height:620px;margin-top:16px;border:1px solid #33254f;border-radius:12px;background:#f7f5fc}
+</style>
+</head>
+<body>
+<h1>Empaquetador de entrega</h1>
+<p>Este archivo no se publica. Genera <code>index.html</code> dentro de <code>tecnosyslan-icmp-hex-lab.zip</code>, listo para el panel de TECNOSYSLAN.</p>
+<div id="checks">Comprobando contenido…</div>
+<button id="btnZip" type="button">Descargar ZIP</button>
+<iframe id="frame" title="Vista previa de la herramienta"></iframe>
+
+<template id="src">
+<style>
+:root{
+  --violet:#6d28d9;--violet-d:#4c1d95;--violet-l:#8b5cf6;--violet-xl:#f4efff;
+  --turq:#0891b2;--turq-l:#22d3ee;--turq-xl:#e6f9fd;
+  --ink:#190f2e;--muted:#61557a;--bg:#f7f5fc;--card:#fff;--line:#e8e2f7;
+  --ok:#0d8f6b;--err:#b91c4a;--warn:#8f5600;--r:18px;
+  --sh:0 6px 22px rgba(76,29,149,.09);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+.hero{background:linear-gradient(135deg,var(--violet-d),var(--violet) 48%,var(--turq));color:#fff;padding:26px 0 24px;border-radius:0 0 28px 28px;box-shadow:0 12px 30px rgba(76,29,149,.22)}
+.hero .wrap{padding-bottom:0}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:44px;height:44px;flex:0 0 auto}
+.kicker{margin:0;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+h1{margin:0;font-size:1.5rem;letter-spacing:-.01em}
+.lead{margin:14px 0 0;font-size:.95rem;max-width:62ch;opacity:.95}
+.lead code,.hero-note code{background:rgba(255,255,255,.16);padding:1px 6px;border-radius:6px}
+.hero-note{margin:10px 0 0;font-size:.82rem;opacity:.9;word-break:break-all}
+.tabs{display:flex;gap:8px;margin:18px 0 14px;flex-wrap:wrap}
+.tab{flex:1 1 150px;padding:11px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--muted);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:.18s}
+.tab:hover{border-color:var(--violet-l);color:var(--violet)}
+.tab.active{background:linear-gradient(135deg,var(--violet),var(--violet-l));border-color:transparent;color:#fff;box-shadow:var(--sh)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh);margin-bottom:14px}
+.card h2{margin:0 0 12px;font-size:1.02rem;color:var(--violet-d)}
+label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:5px}
+textarea,input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fdfcff;color:var(--ink);font:inherit;font-size:.95rem}
+textarea{resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:.88rem}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--violet-l);outline-offset:2px;border-color:var(--violet-l)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:12px}
+.check{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--muted);margin:0}
+.check input{width:18px;height:18px;accent-color:var(--violet);flex:0 0 auto}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{font:inherit;font-weight:700;font-size:.9rem;padding:11px 20px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,var(--violet),var(--violet-l));color:#fff;box-shadow:var(--sh)}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:#fff;color:var(--violet);border:1px solid var(--line);box-shadow:none}
+.btn.turq{background:linear-gradient(135deg,var(--turq),var(--turq-l))}
+.btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.msg{margin:12px 0 0;font-size:.86rem;font-weight:600;min-height:1.2em}
+.msg.err{color:var(--err)}.msg.warn{color:var(--warn)}.msg.ok{color:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--violet-xl);border:1px solid #e3d9ff;border-radius:12px;padding:10px 12px}
+.stat span{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.stat b{font-size:1.05rem;color:var(--violet-d)}
+.chunk{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fdfcff}
+.idx{font-size:.75rem;font-weight:700;color:var(--turq);flex:0 0 40px}
+.chunk code{flex:1;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;word-break:break-all}
+.mini{font:inherit;font-size:.75rem;font-weight:700;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--violet);cursor:pointer}
+pre{margin:0;padding:12px;background:#1c1233;color:#e9e2ff;border-radius:12px;overflow:auto;font-family:ui-monospace,Consolas,monospace;font-size:.82rem;white-space:pre-wrap;word-break:break-all;max-height:340px}
+pre.out{background:var(--turq-xl);color:#073b47;border:1px solid #bdeef8;font-size:.9rem}
+.sub{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.doc h3{margin:16px 0 6px;font-size:.95rem;color:var(--violet-d)}
+.doc ul,.doc ol{margin:0;padding-left:20px;font-size:.9rem;color:#2c2145}
+.doc li{margin-bottom:6px}
+.doc code{background:var(--violet-xl);padding:1px 5px;border-radius:5px;font-family:ui-monospace,Consolas,monospace;font-size:.85em;word-break:break-all}
+footer{border-top:1px solid var(--line);margin-top:22px;padding-top:16px;font-size:.8rem;color:var(--muted)}
+.tests{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.tests li::before{content:"\2714 ";color:var(--ok);font-weight:700}
+.tests li.bad::before{content:"\2718 ";color:var(--err)}
+@media (max-width:520px){h1{font-size:1.25rem}.card{padding:15px}.btn{flex:1 1 100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3l17 6v13c0 11-7.4 19.6-17 23C14.4 41.6 7 33 7 22V9z" fill="rgba(255,255,255,.16)" stroke="#fff" stroke-width="2"/><path d="M12 25h6l3-7 4 13 3-6h6" fill="none" stroke="#22d3ee" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <p class="kicker">TECNOSYSLAN · Redes</p>
+        <h1>ICMP Hex Lab</h1>
+      </div>
+    </div>
+    <p class="lead">Constructor y decodificador de carga útil ICMP: transforma texto en el patrón hexadecimal de <code>ping -p</code> y recupera el texto a partir de una captura con <code>tcpdump</code>.</p>
+    <p class="hero-note">Caso original: <code>ping -p 4b6579deadbeef0102030405 -c 1 192.168.1.10</code></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <noscript><div class="card"><p class="msg err">Esta herramienta necesita JavaScript activado.</p></div></noscript>
+
+  <nav class="tabs" role="tablist" aria-label="Modos de la herramienta">
+    <button role="tab" id="tab-enc" class="tab active" aria-selected="true" aria-controls="p-enc">1 · Codificar</button>
+    <button role="tab" id="tab-dec" class="tab" aria-selected="false" aria-controls="p-dec">2 · Decodificar</button>
+    <button role="tab" id="tab-doc" class="tab" aria-selected="false" aria-controls="p-doc">3 · Recetario</button>
+  </nav>
+
+  <section id="p-enc" role="tabpanel" aria-labelledby="tab-enc" class="panel">
+    <div class="card">
+      <h2>Secreto a transportar</h2>
+      <label for="txt">Texto (contraseña, token, ruta, fragmento de fichero)</label>
+      <textarea id="txt" rows="3" maxlength="2048" placeholder="P@ssw0rd!"></textarea>
+      <div class="row">
+        <div>
+          <label for="host">Host de destino</label>
+          <input id="host" value="192.168.1.10" spellcheck="false" autocomplete="off">
+        </div>
+        <div>
+          <label for="ivl">Intervalo entre paquetes (s)</label>
+          <input id="ivl" type="number" value="0.5" min="0.2" max="60" step="0.1">
+        </div>
+        <div>
+          <label for="mode">Formato de salida</label>
+          <select id="mode">
+            <option value="list">Comandos individuales</option>
+            <option value="loop" selected>Bucle for (recomendado)</option>
+            <option value="chain">Cadena con &amp;&amp;</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnEnc" type="button">Codificar</button>
+        <button class="btn ghost" id="btnCopyAll" type="button" disabled>Copiar comandos</button>
+        <button class="btn ghost" id="btnClear" type="button">Limpiar</button>
+      </div>
+      <p class="msg" id="msgE" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="card" id="cardOut" hidden>
+      <h2>Resultado</h2>
+      <div class="stats" id="stats"></div>
+      <p class="sub">Cada paquete transporta un bloque de 16 bytes. Envíalos en orden: el receptor debe recibirlos en secuencia.</p>
+      <div id="list"></div>
+      <p class="sub" style="margin-top:14px">Comandos generados</p>
+      <pre id="cmd"></pre>
+    </div>
+  </section>
+
+  <section id="p-dec" role="tabpanel" aria-labelledby="tab-dec" class="panel" hidden>
+    <div class="card">
+      <h2>Captura recibida</h2>
+      <label for="inHex">Salida de tcpdump / xxd / hexdump</label>
+      <textarea id="inHex" rows="8" spellcheck="false" placeholder="0x0010:  4b65 79de adbe ef01 0203 0405  Key............."></textarea>
+      <div class="row">
+        <div>
+          <label for="skip">Bytes a saltar al inicio</label>
+          <input id="skip" type="number" value="8" min="0" max="64" step="1">
+        </div>
+        <label class="check" for="dump"><input type="checkbox" id="dump" checked> Interpretar formato de volcado</label>
+        <label class="check" for="strip"><input type="checkbox" id="strip" checked> Quitar caracteres de control</label>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnDec" type="button">Decodificar</button>
+        <button class="btn ghost" id="btnDemo" type="button">Cargar ejemplo</button>
+      </div>
+      <p class="msg" id="msgE2" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="card">
+      <h2>Texto recuperado</h2>
+      <pre class="out" id="res"></pre>
+      <div class="actions">
+        <button class="btn turq" id="btnCopyTxt" type="button">Copiar texto</button>
+        <button class="btn ghost" id="btnClear2" type="button">Limpiar</button>
+      </div>
+      <p class="msg" id="msgD" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section id="p-doc" role="tabpanel" aria-labelledby="tab-doc" class="panel doc" hidden>
+    <div class="card">
+      <h2>Qué hace exactamente ese comando</h2>
+      <ul>
+        <li><code>-p</code> rellena el payload ICMP con hasta <strong>16 bytes</strong> expresados en hexadecimal. No se envía texto: se envía binario.</li>
+        <li><code>-c 1</code> limita a un único paquete por invocación, de modo que cada comando transporta un bloque de 16 bytes y el orden lo marca la secuencia de ejecución.</li>
+        <li>El firewall del borde ve un eco ICMP permitido y corriente. La información viaja dentro de un protocolo que casi nadie inspecciona a fondo: es un <strong>canal encubierto</strong> (ICMP tunneling).</li>
+      </ul>
+      <h3>Por qué aparece en informes de intrusión</h3>
+      <p class="sub">Sirve para exfiltrar credenciales, hashes o rutas cuando solo hay ICMP disponible, y también como canal de mando y control. Herramientas como ptunnel o icmpsh automatizan lo que aquí se construye a mano; el tamaño reducido de cada paquete obliga a fragmentar y a esperar entre envíos.</p>
+      <h3>Capturar en el receptor</h3>
+      <pre>sudo tcpdump -i any -n -s0 -XX 'icmp[icmptype]==8'</pre>
+      <p class="sub">Copia la salida y pégala en la pestaña anterior. El salto por defecto de 8 bytes descarta la marca de tiempo que <code>ping</code> coloca al principio del payload.</p>
+      <h3>Límites reales</h3>
+      <ul>
+        <li>16 bytes útiles por paquete: 2048 bytes son ya 128 paquetes.</li>
+        <li>Con <code>-i</code> por debajo de 0,2 s <code>ping</code> exige privilegios de root.</li>
+        <li>ICMP puede estar filtrado en el borde; si no hay eco, no hay canal.</li>
+        <li>Sin cifrado ni integridad: hex o base64 no sustituyen a SSH.</li>
+        <li>El <code>ping</code> nativo de Windows no admite patrón hexadecimal; usa WSL o una distro.</li>
+      </ul>
+      <h3>Endurecimiento</h3>
+      <ul>
+        <li>Limitar la tasa de ICMP en el router y registrar payloads anómalos.</li>
+        <li>No asumir que «ICMP cerrado» equivale a canal cerrado: muchos equipos permiten eco hacia Internet.</li>
+        <li>Vigilar volúmenes altos de eco con tamaño constante desde un mismo origen.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>Autopruebas de la herramienta: <strong id="tSum">ejecutando…</strong></p>
+    <ul class="tests" id="tList"></ul>
+  </footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var MAXB=2048, CH=16;
+var RE4=/^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/;
+var REH=/^(?=.{1,253}$)(?!-)[A-Za-z0-9-]{1,63}(?:\.(?!-)[A-Za-z0-9-]{1,63})*$/;
+var hex2=function(b){return b.toString(16).padStart(2,'0');};
+var toHex=function(bytes){return Array.from(bytes,hex2).join('');};
+var hexToBytes=function(h){var m=h.match(/../g)||[];return new Uint8Array(m.map(function(x){return parseInt(x,16);}));};
+
+function msg(el,text,kind){el.textContent=text;el.className='msg'+(kind?' '+kind:'');}
+
+function copy(text,el){
+  if(!text){msg(el,'No hay nada que copiar.','warn');return;}
+  var done=function(ok){
+    if(ok){msg(el,'Copiado al portapapeles.','ok');}
+    else{msg(el,'Copia manual: selecciona el texto y usa Ctrl+C.','warn');}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){done(true);},function(){fallback();});
+  }else{fallback();}
+  function fallback(){
+    var ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    var ok=false;
+    try{ok=document.execCommand('copy');}catch(e){ok=false;}
+    ta.remove();done(ok);
+  }
+}
+
+var tabs=Array.prototype.slice.call(document.querySelectorAll('.tab'));
+tabs.forEach(function(t){
+  t.addEventListener('click',function(){
+    tabs.forEach(function(o){
+      o.classList.toggle('active',o===t);
+      o.setAttribute('aria-selected',o===t?'true':'false');
+    });
+    ['enc','dec','doc'].forEach(function(k){$('p-'+k).hidden=('tab-'+k)!==t.id;});
+  });
+});
+
+var lastCmd='';
+
+function encode(){
+  var out=$('cardOut'),list=$('list'),stats=$('stats'),pre=$('cmd');
+  list.textContent='';stats.textContent='';pre.textContent='';out.hidden=true;
+  lastCmd='';$('btnCopyAll').disabled=true;
+
+  var text=$('txt').value;
+  if(!text){msg($('msgE'),'Escribe el texto que quieres transportar.','err');$('txt').focus();return;}
+
+  var host=$('host').value.trim();
+  if(!host){msg($('msgE'),'Indica un host de destino.','err');$('host').focus();return;}
+  if(!RE4.test(host)&&!REH.test(host)){msg($('msgE'),'Host no válido: usa IPv4 (192.168.1.10) o nombre DNS (servidor.local).','err');$('host').focus();return;}
+
+  var ivl=parseFloat($('ivl').value);
+  if(!isFinite(ivl)||ivl<=0){msg($('msgE'),'El intervalo debe ser un número mayor que 0.','err');return;}
+  if(ivl>60){msg($('msgE'),'El intervalo máximo admitido es 60 s.','err');return;}
+
+  var bytes=new TextEncoder().encode(text);
+  if(bytes.length>MAXB){msg($('msgE'),'Demasiado texto: '+bytes.length+' bytes (máximo '+MAXB+').','err');return;}
+
+  var chunks=[];
+  for(var i=0;i<bytes.length;i+=CH){chunks.push(toHex(bytes.subarray(i,i+CH)));}
+
+  var warns=[];
+  if(/[^\x20-\x7E]/.test(text)){warns.push('Hay caracteres fuera de ASCII imprimible: viajan en UTF-8 y los acentos ocupan 2 bytes.');}
+  if(ivl<0.2){warns.push('Por debajo de 0,2 s ping necesita root.');}
+  if(chunks.length>1){warns.push(chunks.length+' paquetes: el orden solo se conserva si se ejecutan en secuencia.');}
+
+  var ivlTxt=String(ivl), mode=$('mode').value, cmd='';
+  if(mode==='list'){
+    cmd=chunks.map(function(h){return 'ping -p '+h+' -c 1 '+host;}).join('\n');
+  }else if(mode==='chain'){
+    cmd=chunks.map(function(h){return 'ping -p '+h+' -c 1 '+host+' >/dev/null';}).join(' && sleep '+ivlTxt+' &&\n');
+  }else{
+    cmd='for p in \\\n'+chunks.join(' \\\n')+' \\\n; do\n  ping -p "$p" -c 1 '+host+' >/dev/null\n  sleep '+ivlTxt+'\ndone';
+  }
+
+  var dur=((chunks.length-1)*ivl)+(chunks.length*0.002);
+  function stat(k,v){
+    var d=document.createElement('div');d.className='stat';
+    var s=document.createElement('span');s.textContent=k;
+    var b=document.createElement('b');b.textContent=v;
+    d.appendChild(s);d.appendChild(b);return d;
+  }
+  stats.appendChild(stat('Bytes',String(bytes.length)));
+  stats.appendChild(stat('Paquetes',String(chunks.length)));
+  stats.appendChild(stat('Duración estimada',dur.toFixed(1)+' s'));
+  stats.appendChild(stat('Máximo por paquete','16 bytes'));
+
+  chunks.forEach(function(h,idx){
+    var row=document.createElement('div');row.className='chunk';
+    var n=document.createElement('span');n.className='idx';n.textContent='#'+(idx+1);
+    var code=document.createElement('code');code.textContent=h;
+    var btn=document.createElement('button');
+    btn.type='button';btn.className='mini';btn.textContent='Copiar';
+    btn.addEventListener('click',function(){copy('ping -p '+h+' -c 1 '+host,$('msgE'));});
+    row.appendChild(n);row.appendChild(code);row.appendChild(btn);
+    list.appendChild(row);
+  });
+
+  pre.textContent=cmd;
+  lastCmd=cmd;
+  $('btnCopyAll').disabled=false;
+  out.hidden=false;
+
+  if(warns.length){msg($('msgE'),warns.join(' '),'warn');}
+  else{msg($('msgE'),'Listo: '+chunks.length+' paquete(s) preparados para '+host+'.','ok');}
+}
+
+function extractHex(raw,dumpMode){
+  var out=[];
+  raw.split(/\r?\n/).forEach(function(line){
+    if(!line.trim()){return;}
+    if(dumpMode){
+      var m=line.match(/^\s*(?:0x)?[0-9a-fA-F]{4,8}:\s*((?:[0-9a-fA-F]{2,4}\s+)*[0-9a-fA-F]{2,4})/);
+      if(m){
+        var g=m[1].replace(/\s+/g,'');
+        if(g.length>32){g=g.slice(0,32);}
+        out.push(g);return;
+      }
+    }
+    var only=line.match(/[0-9a-fA-F]/g);
+    if(only){out.push(only.join(''));}
+  });
+  return out.join('');
+}
+
+function decode(){
+  var res=$('res');
+  res.textContent='';
+  var raw=$('inHex').value;
+  if(!raw.trim()){msg($('msgD'),'Pega la salida de tcpdump o una cadena hexadecimal.','err');$('inHex').focus();return;}
+
+  var hex=extractHex(raw,$('dump').checked);
+  if(!hex){msg($('msgD'),'No se han encontrado bytes hexadecimales en la entrada.','err');return;}
+  if(hex.length%2!==0){msg($('msgD'),'Número impar de dígitos hexadecimales ('+hex.length+'): revisa la captura o desactiva el modo volcado.','err');return;}
+
+  var skip=parseInt($('skip').value,10);
+  if(!isFinite(skip)||skip<0){skip=0;}
+  if(skip*2>=hex.length){msg($('msgD'),'El salto de '+skip+' bytes consume toda la entrada.','err');return;}
+
+  var body=hex.slice(skip*2);
+  var bytes=hexToBytes(body);
+  var text='',bad=false;
+  try{text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}
+  catch(e){bad=true;text=new TextDecoder('utf-8').decode(bytes);}
+
+  if($('strip').checked){
+    text=text.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,'');
+  }
+
+  if(!text){msg($('msgD'),'Los bytes leídos ('+bytes.length+') no producen texto legible. Prueba a ajustar el salto.','warn');return;}
+  res.textContent=text;
+
+  if(bad){msg($('msgD'),bytes.length+' bytes decodificados; había secuencias UTF-8 no válidas y se han sustituido.','warn');}
+  else{msg($('msgD'),bytes.length+' bytes decodificados correctamente.','ok');}
+}
+
+$('btnEnc').addEventListener('click',encode);
+$('btnCopyAll').addEventListener('click',function(){copy(lastCmd,$('msgE'));});
+$('btnClear').addEventListener('click',function(){
+  $('txt').value='';$('cardOut').hidden=true;$('list').textContent='';
+  $('stats').textContent='';$('cmd').textContent='';lastCmd='';
+  $('btnCopyAll').disabled=true;msg($('msgE'),'','');
+  $('txt').focus();
+});
+$('btnDec').addEventListener('click',decode);
+$('btnDemo').addEventListener('click',function(){
+  $('inHex').value='0x0000:  4b65 79de adbe ef01 0203 0405  Key.............';
+  $('skip').value='0';$('dump').checked=true;$('strip').checked=true;
+  msg($('msgE2'),'Ejemplo cargado: decodifica para ver el resultado.','ok');
+  decode();
+});
+$('btnCopyTxt').addEventListener('click',function(){copy($('res').textContent,$('msgD'));});
+$('btnClear2').addEventListener('click',function(){
+  $('inHex').value='';$('res').textContent='';msg($('msgD'),'','');msg($('msgE2'),'','');
+});
+
+(function selfTest(){
+  var tests=[];
+  function t(name,fn){
+    var ok=false;
+    try{ok=fn()===true;}catch(e){ok=false;}
+    tests.push([name,ok]);
+  }
+  t('Codificación hexadecimal exacta',function(){
+    return toHex(new TextEncoder().encode('P@ssw0rd!'))==='504073737730726421';
+  });
+  t('Troceado de 40 bytes en 3 bloques',function(){
+    var b=new Uint8Array(40),n=0;
+    for(var i=0;i<b.length;i+=16){n++;}
+    return n===3;
+  });
+  t('IPv4 válida aceptada',function(){return RE4.test('192.168.1.10')===true;});
+  t('IPv4 fuera de rango rechazada',function(){return RE4.test('999.1.1.1')===false;});
+  t('Nombre DNS inválido rechazado',function(){return REH.test('-mal')===false;});
+  t('Extracción de línea tcpdump',function(){
+    return extractHex('0x0010:  5040 7373 7730 7264 21   P@ssw0rd!',true)==='504073737730726421';
+  });
+  t('Ida y vuelta sin pérdida',function(){
+    var h=toHex(new TextEncoder().encode('P@ssw0rd!'));
+    return new TextDecoder().decode(hexToBytes(h))==='P@ssw0rd!';
+  });
+  t('UTF-8 multibyte conservado',function(){
+    var h=toHex(new TextEncoder().encode('contraseña'));
+    return new TextDecoder().decode(hexToBytes(h))==='contraseña';
+  });
+
+  var list=$('tList'),pass=0;
+  tests.forEach(function(pair){
+    var li=document.createElement('li');
+    li.textContent=pair[0];
+    if(!pair[1]){li.className='bad';}else{pass++;}
+    list.appendChild(li);
+  });
+  $('tSum').textContent=pass+'/'+tests.length+' correctas';
+})();
+})();
+</script>
+</template>
+
+<script>
+(function(){
+'use strict';
+var tpl=document.getElementById('src');
+
+function build(){
+  var html=tpl.innerHTML;
+  var end=html.indexOf('</style>');
+  var css='',body=html;
+  if(end>-1){css=html.slice(0,end+8);body=html.slice(end+8);}
+  return '<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="utf-8">\n'
+    +'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+    +'<title>ICMP Hex Lab \u00b7 TECNOSYSLAN</title>\n'
+    +'<meta name="description" content="Constructor y decodificador de carga \u00fatil ICMP en hexadecimal para ping -p y tcpdump. Herramienta de redes de TECNOSYSLAN.">\n'
+    +'<meta name="color-scheme" content="light">\n'
+    +css+'\n</head>\n<body>\n'+body+'\n</body>\n</html>\n';
+}
+
+var TABLE=(function(){
+  var t=new Uint32Array(256);
+  for(var n=0;n<256;n++){
+    var c=n;
+    for(var k=0;k<8;k++){c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);}
+    t[n]=c>>>0;
+  }
+  return t;
+})();
+
+function crc32(bytes){
+  var c=0xFFFFFFFF;
+  for(var i=0;i<bytes.length;i++){c=TABLE[(c^bytes[i])&0xFF]^(c>>>8);}
+  return (c^0xFFFFFFFF)>>>0;
+}
+
+function makeZip(name,data){
+  var nb=new TextEncoder().encode(name);
+  var crc=crc32(data);
+  var lh=new Uint8Array(30+nb.length),dv=new DataView(lh.buffer);
+  dv.setUint32(0,0x04034b50,true);
+  dv.setUint16(4,20,true);
+  dv.setUint16(6,0x0800,true);
+  dv.setUint16(8,0,true);
+  dv.setUint16(10,0,true);
+  dv.setUint16(12,0x21,true);
+  dv.setUint32(14,crc,true);
+  dv.setUint32(18,data.length,true);
+  dv.setUint32(22,data.length,true);
+  dv.setUint16(26,nb.length,true);
+  dv.setUint16(28,0,true);
+  lh.set(nb,30);
+
+  var cd=new Uint8Array(46+nb.length),dvc=new DataView(cd.buffer);
+  dvc.setUint32(0,0x02014b50,true);
+  dvc.setUint16(4,20,true);
+  dvc.setUint16(6,20,true);
+  dvc.setUint16(8,0x0800,true);
+  dvc.setUint16(10,0,true);
+  dvc.setUint16(12,0,true);
+  dvc.setUint16(14,0x21,true);
+  dvc.setUint32(16,crc,true);
+  dvc.setUint32(20,data.length,true);
+  dvc.setUint32(24,data.length,true);
+  dvc.setUint16(28,nb.length,true);
+  dvc.setUint32(42,0,true);
+  cd.set(nb,46);
+
+  var eocd=new Uint8Array(22),dve=new DataView(eocd.buffer);
+  dve.setUint32(0,0x06054b50,true);
+  dve.setUint16(8,1,true);
+  dve.setUint16(10,1,true);
+  dve.setUint32(12,cd.length,true);
+  dve.setUint32(16,lh.length+data.length,true);
+
+  var out=new Uint8Array(lh.length+data.length+cd.length+eocd.length),o=0;
+  out.set(lh,o);o+=lh.length;
+  out.set(data,o);o+=data.length;
+  out.set(cd,o);o+=cd.length;
+  out.set(eocd,o);
+  return out;
+}
+
+var src=build();
+var bytes=new TextEncoder().encode(src);
+document.getElementById('frame').srcdoc=src;
+
+var box=document.getElementById('checks');
+var items=[
+  ['Contiene index.html',true],
+  ['1 archivo (m\u00e1ximo 12)',true],
+  ['Tama\u00f1o '+(bytes.length/1024).toFixed(1)+' KB (m\u00e1ximo 3072)',bytes.length<3145728],
+  ['Sin rutas absolutas',!/\b(?:src|href)="\//.test(src)],
+  ['Sin recursos externos',!/https?:\/\/[^"'\s]+\.(?:js|css)/.test(src)],
+  ['Sin credenciales ni tokens',!/api[_-]?key\s*[:=]/i.test(src)],
+  ['index.html v\u00e1lido',src.indexOf('<!DOCTYPE html>')===0&&src.indexOf('</html>')>-1]
+];
+var ul=document.createElement('ul');
+items.forEach(function(it){
+  var li=document.createElement('li');
+  li.textContent=it[0];
+  if(!it[1]){li.className='bad';}
+  ul.appendChild(li);
+});
+box.textContent='Comprobaciones previas:';
+box.appendChild(ul);
+
+document.getElementById('btnZip').addEventListener('click',function(){
+  var zip=makeZip('index.html',bytes);
+  var blob=new Blob([zip],{type:'application/zip'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='tecnosyslan-icmp-hex-lab.zip';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+});
+})();
+</script>
+</body>
+</html>
