@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tecnosyslan-admin-api",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-07",
+  "workers_dev": true,
+  "ratelimits": [
+    {
+      "name": "LOGIN_LIMIT",
+      "namespace_id": "794311",
+      "simple": { "limit": 6, "period": 60 }
+    }
+  ]
+}
