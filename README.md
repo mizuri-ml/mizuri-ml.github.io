@@ -1,36 +1,24 @@
-# Nodo Seguro — Blog de ciberseguridad, redes y telecomunicaciones
+# TECNOSYSLAN — Plataforma moderna (Diseño D)
 
-Blog gratuito basado en **GitHub Pages + Jekyll**. Incluye páginas responsivas, artículos Markdown y tres herramientas locales para educación: calculadora IPv4/CIDR, generador seguro de contraseñas y hash SHA-256.
+Sitio público estático con GitHub Pages y Jekyll.
 
-## Publicar
+Módulos: Inicio, Herramientas, Noticias, Artículos, Contacto, Acerca de y Administración.
 
-Lee **[INSTRUCCIONES_PUBLICAR.md](INSTRUCCIONES_PUBLICAR.md)**.
+El panel de administración requiere un Cloudflare Worker separado, con la contraseña y el token de GitHub almacenados exclusivamente como secretos. Los archivos de ese servidor están en `_backend/` y no deben mezclarse con el frontend publicado.
 
-## Estructura
+Para instalar el ZIP en GitHub Desktop y activar la administración, lee primero **GUIA_INSTALACION.md**.
 
-```text
-nodo-seguro-blog/
-├── _config.yml                 # Configuración de Jekyll
-├── _layouts/                  # Plantillas de página y artículo
-├── _includes/                 # Tarjetas reutilizables
-├── _posts/                    # Publicaciones Markdown (YYYY-MM-DD-titulo.md)
-├── assets/
-│   ├── css/style.css          # Estilos responsive
-│   ├── js/main.js             # Menú, búsqueda, compartir
-│   ├── js/tools.js            # Utilidades locales
-│   └── img/favicon.svg        # Icono original
-├── blog/index.html            # Biblioteca de artículos
-├── herramientas/index.html    # Herramientas interactivas
-├── acerca/index.html          # Descripción del proyecto
-├── index.html                 # Portada
-├── feed.xml                   # RSS
-├── 404.html                   # Página no encontrada
-├── PLANTILLA_PROMPT.md        # Instrucción para nuevos artículos con IA
-└── INSTRUCCIONES_PUBLICAR.md  # Guía completa para GitHub Pages
-```
+## Contenido preservado del sitio original
 
-No requiere dependencias en el navegador, claves, cuentas de pago ni servidor propio.
+- Tres artículos publicados sobre phishing, VLAN y FTTH/GPON.
+- Calculadora IPv4, generador de contraseñas y SHA-256.
+- Laboratorio de patrones ICMP y conversor Mbps/MB/s de entregas anteriores.
+- Feed RSS y la configuración general de GitHub Pages.
 
-## Licencia
+## Publicar contenido desde el panel
 
-Código de ejemplo educativo. Revisa y adapta el contenido antes de publicarlo. Los artículos deben comprobarse y actualizarse según evolucione la tecnología.
+- Herramientas nuevas: `_herramientas/<slug>.md` (metadatos) + `herramientas/apps/<slug>/index.html` (contenido).
+- Noticias: `_posts/YYYY-MM-DD-<slug>.md`.
+- La colección Jekyll detecta nuevas herramientas sin editar manualmente el índice.
+
+**No se ha ejecutado ningún commit ni desplegado ningún Worker desde la generación de este paquete.**

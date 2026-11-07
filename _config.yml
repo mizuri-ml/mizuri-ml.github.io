@@ -1,6 +1,6 @@
-title: "Nodo Seguro"
-description: "Blog de ciberseguridad, redes y telecomunicaciones. Análisis, guías y herramientas técnicas gratuitas."
-url: ""
+title: "TECNOSYSLAN"
+description: "Tecnología aplicada: ciberseguridad, redes, telecomunicaciones, noticias y herramientas gratuitas."
+url: "https://mizuri-ml.github.io"
 baseurl: ""
 lang: "es"
 timezone: "America/Guayaquil"
@@ -9,14 +9,27 @@ highlighter: rouge
 permalink: /articulos/:title/
 future: false
 show_excerpts: true
-exclude:
-  - README.md
-  - LICENSE
-  - INSTRUCCIONES_PUBLICAR.md
-  - PLANTILLA_PROMPT.md
+collections:
+  herramientas:
+    output: true
+    permalink: /herramientas/:name/
 defaults:
   - scope:
       path: ""
       type: "posts"
     values:
-      layout: "post"
+      layout: post
+  - scope:
+      path: ""
+      type: "herramientas"
+    values:
+      layout: tool
+exclude:
+  - README.md
+  - GUIA_INSTALACION.md
+  - SEGURIDAD_ADMIN.md
+  - PLANTILLA_NOTICIA.md
+  - PLANTILLA_HERRAMIENTA.html
+  - _backend
+  - .gitignore
+  - .github

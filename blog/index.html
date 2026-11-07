@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Artículos
-description: "Biblioteca de artículos sobre ciberseguridad, redes y telecomunicaciones."
 permalink: /blog/
+description: "Guías y artículos técnicos de TECNOSYSLAN."
 ---
-<section class="page-heading container"><span class="eyebrow">BIBLIOTECA TÉCNICA</span><h1>Artículos y guías<span class="dot">.</span></h1><p>Contenido práctico sobre protección de sistemas, conectividad e infraestructura de telecomunicaciones.</p></section>
-<section class="container section-compact"><div class="search-panel"><label for="article-search">BUSCAR EN LA BIBLIOTECA</label><div class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="article-search" type="search" placeholder="Ej. VLAN, fibra óptica, phishing..." autocomplete="off"></div><p id="article-search-status" aria-live="polite" class="search-status">Explora los artículos publicados.</p></div><div class="articles-grid" id="article-list">{% for post in site.posts %}<div class="searchable-article" data-search="{{ post.title | append: ' ' | append: post.description | append: ' ' | append: post.categories | downcase | escape }}">{% include article-card.html post=post %}</div>{% endfor %}</div><p class="empty-state" id="empty-articles" hidden>No se encontraron artículos con esos términos.</p></section>
+<section class="page-intro container"><span class="eyebrow">BIBLIOTECA TÉCNICA</span><h1>Artículos y <em>guías.</em></h1><p class="intro-text">Contenido práctico para comprender redes, telecomunicaciones y buenas prácticas de seguridad informática.</p></section>
+<section class="container section-compact"><div class="search-panel"><label for="article-search">BUSCAR EN LA BIBLIOTECA</label><input id="article-search" type="search" placeholder="Ej. phishing, VLAN, FTTH..." autocomplete="off"><p id="article-search-status" class="search-status" role="status"></p></div><div class="card-grid" id="article-list">{% for post in site.posts %}{% unless post.categories contains 'Noticias' or post.categories contains 'noticias' %}{% include article-card.html post=post %}{% endunless %}{% endfor %}</div><p id="empty-articles" class="empty-state" hidden>No hay artículos que coincidan con tu búsqueda.</p></section>
