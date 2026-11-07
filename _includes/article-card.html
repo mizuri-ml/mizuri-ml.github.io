@@ -1,0 +1,5 @@
+<article class="article-card">
+  <div class="card-head"><span class="card-icon" aria-hidden="true">{% if include.post.categories contains 'Redes' %}⌘{% elsif include.post.categories contains 'Telecomunicaciones' %}⌁{% else %}◇{% endif %}</span><span class="card-category">{{ include.post.categories | first | default: 'Artículo' | escape }}</span></div>
+  <div class="card-body"><div class="card-date">{{ include.post.date | date: '%d %b %Y' }}</div><h3><a href="{{ include.post.url | relative_url }}">{{ include.post.title | escape }}</a></h3><p>{{ include.post.description | default: include.post.excerpt | strip_html | truncatewords: 24 | escape }}</p></div>
+  <a class="card-read" href="{{ include.post.url | relative_url }}">Leer artículo <span aria-hidden="true">↗</span></a>
+</article>

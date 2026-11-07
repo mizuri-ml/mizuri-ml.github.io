@@ -1,0 +1,22 @@
+title: "Nodo Seguro"
+description: "Blog de ciberseguridad, redes y telecomunicaciones. Análisis, guías y herramientas técnicas gratuitas."
+url: ""
+baseurl: ""
+lang: "es"
+timezone: "America/Guayaquil"
+markdown: kramdown
+highlighter: rouge
+permalink: /articulos/:title/
+future: false
+show_excerpts: true
+exclude:
+  - README.md
+  - LICENSE
+  - INSTRUCCIONES_PUBLICAR.md
+  - PLANTILLA_PROMPT.md
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"

@@ -1,0 +1,32 @@
+---
+layout: default
+title: Inicio
+description: "Nodo Seguro: artículos, recursos y herramientas gratuitas sobre ciberseguridad, redes y telecomunicaciones."
+---
+<section class="hero">
+  <div class="grid-backdrop" aria-hidden="true"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="hero-tag"><span class="status-dot"></span> TU ESPACIO DE TECNOLOGÍA Y SEGURIDAD</div>
+      <h1>Entiende la tecnología.<br><span>Protege lo que importa.</span></h1>
+      <p>Un punto de encuentro para aprender ciberseguridad, dominar redes y explorar telecomunicaciones con guías claras, análisis técnicos y herramientas gratuitas.</p>
+      <div class="hero-actions"><a class="button button-primary" href="{{ '/blog/' | relative_url }}">Explorar artículos <span aria-hidden="true">↗</span></a><a class="button button-outline" href="{{ '/herramientas/' | relative_url }}">Usar herramientas <span aria-hidden="true">→</span></a></div>
+      <div class="hero-features"><span><i aria-hidden="true">✓</i> Contenido educativo</span><span><i aria-hidden="true">✓</i> Herramientas gratuitas</span><span><i aria-hidden="true">✓</i> Enfoque práctico</span></div>
+    </div>
+    <div class="hero-visual" aria-label="Panel ilustrativo del laboratorio de redes">
+      <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+      <div class="terminal-card">
+        <div class="terminal-bar"><span class="terminal-lights"><b></b><b></b><b></b></span><span>LABORATORIO / VISTA CONCEPTUAL</span><span class="terminal-online"><span></span> LEARNING</span></div>
+        <div class="terminal-body"><p class="console-prompt">$ <span>explorar --dominio ciberseguridad</span></p><p><span class="console-check">✓</span> Defensa en profundidad <span class="console-data">01</span></p><p><span class="console-check">✓</span> Redes y segmentación <span class="console-data">02</span></p><p><span class="console-check">✓</span> Telecomunicaciones <span class="console-data">03</span></p><p><span class="console-check">✓</span> Aprendizaje continuo <span class="console-data">04</span></p><div class="terminal-lines" aria-hidden="true"><span style="height:38%"></span><span style="height:69%"></span><span style="height:52%"></span><span style="height:85%"></span><span style="height:64%"></span><span style="height:92%"></span><span style="height:78%"></span><span style="height:100%"></span><span style="height:61%"></span><span style="height:82%"></span><span style="height:94%"></span><span style="height:71%"></span></div><div class="terminal-bottom"><span>ENTORNO EDUCATIVO</span><span>ONLINE / 2026</span></div></div>
+      </div>
+      <div class="floating-tag floating-one">SEGURIDAD / REDES</div><div class="floating-tag floating-two">APRENDER · PROTEGER</div>
+    </div>
+  </div>
+</section>
+<section class="domains-bar"><div class="container domains-inner"><span class="domains-label">ÁREAS DE CONOCIMIENTO</span><span>01 / CIBERSEGURIDAD</span><span>02 / REDES</span><span>03 / TELECOMUNICACIONES</span></div></section>
+<section class="section container"><div class="section-heading"><div><span class="eyebrow">EXPLORA EL CONOCIMIENTO</span><h2>Tres disciplinas. Una perspectiva.</h2><p>Desde los fundamentos hasta la implementación técnica.</p></div></div>
+  <div class="topics-grid"><a class="topic-card" href="{{ '/blog/' | relative_url }}"><span class="topic-index">01 / SEGURIDAD</span><div class="topic-symbol">◈</div><h3>Ciberseguridad</h3><p>Protección de sistemas, amenazas, análisis de vulnerabilidades y defensa.</p><span class="topic-link">Explorar contenidos ↗</span></a><a class="topic-card" href="{{ '/blog/' | relative_url }}"><span class="topic-index">02 / CONECTIVIDAD</span><div class="topic-symbol">⌘</div><h3>Redes</h3><p>Direccionamiento, VLAN, protocolos y resolución de problemas de conectividad.</p><span class="topic-link">Explorar contenidos ↗</span></a><a class="topic-card" href="{{ '/blog/' | relative_url }}"><span class="topic-index">03 / INFRAESTRUCTURA</span><div class="topic-symbol">⌁</div><h3>Telecomunicaciones</h3><p>Fibra óptica, GPON, arquitectura de acceso y tecnologías emergentes.</p><span class="topic-link">Explorar contenidos ↗</span></a></div>
+</section>
+<section class="section section-tint"><div class="container"><div class="section-heading"><div><span class="eyebrow">LABORATORIO EN LÍNEA</span><h2>Herramientas para aprender haciendo</h2><p>Recursos que funcionan directamente en tu navegador.</p></div><a class="inline-link" href="{{ '/herramientas/' | relative_url }}">Todas las herramientas ↗</a></div><div class="tools-preview"><a href="{{ '/herramientas/#subredes' | relative_url }}" class="preview-tool"><span class="preview-icon">⌘</span><div><strong>Calculadora IPv4 / CIDR</strong><span>Red, broadcast y rango de hosts</span></div><span class="preview-arrow">↗</span></a><a href="{{ '/herramientas/#contrasenas' | relative_url }}" class="preview-tool"><span class="preview-icon">✳</span><div><strong>Generador de contraseñas</strong><span>Aleatoriedad criptográfica local</span></div><span class="preview-arrow">↗</span></a><a href="{{ '/herramientas/#sha256' | relative_url }}" class="preview-tool"><span class="preview-icon">#</span><div><strong>Hash SHA-256</strong><span>Calcula el digest de un texto</span></div><span class="preview-arrow">↗</span></a></div></div></section>
+<section class="section container"><div class="section-heading"><div><span class="eyebrow">DESDE EL BLOG</span><h2>Últimos artículos</h2><p>Guías para comprender y aplicar conceptos técnicos.</p></div><a class="inline-link" href="{{ '/blog/' | relative_url }}">Ver todas las publicaciones ↗</a></div><div class="articles-grid">{% for post in site.posts limit:3 %}{% include article-card.html post=post %}{% endfor %}</div></section>
+<section class="section cta-section"><div class="container cta-inner"><div><span class="eyebrow">APRENDIZAJE CONTINUO</span><h2>La seguridad empieza por comprender.</h2><p>Explora los artículos, prueba los recursos y lleva cada concepto a la práctica.</p></div><a class="button button-primary" href="{{ '/blog/' | relative_url }}">Empezar a aprender ↗</a></div></section>

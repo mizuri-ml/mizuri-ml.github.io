@@ -1,0 +1,8 @@
+---
+layout: default
+title: Artículos
+description: "Biblioteca de artículos sobre ciberseguridad, redes y telecomunicaciones."
+permalink: /blog/
+---
+<section class="page-heading container"><span class="eyebrow">BIBLIOTECA TÉCNICA</span><h1>Artículos y guías<span class="dot">.</span></h1><p>Contenido práctico sobre protección de sistemas, conectividad e infraestructura de telecomunicaciones.</p></section>
+<section class="container section-compact"><div class="search-panel"><label for="article-search">BUSCAR EN LA BIBLIOTECA</label><div class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="article-search" type="search" placeholder="Ej. VLAN, fibra óptica, phishing..." autocomplete="off"></div><p id="article-search-status" aria-live="polite" class="search-status">Explora los artículos publicados.</p></div><div class="articles-grid" id="article-list">{% for post in site.posts %}<div class="searchable-article" data-search="{{ post.title | append: ' ' | append: post.description | append: ' ' | append: post.categories | downcase | escape }}">{% include article-card.html post=post %}</div>{% endfor %}</div><p class="empty-state" id="empty-articles" hidden>No se encontraron artículos con esos términos.</p></section>
