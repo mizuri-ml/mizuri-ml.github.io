@@ -1,8 +1,0 @@
----
-layout: default
-title: Artículos
-permalink: /blog/
-description: "Guías y artículos técnicos de TECNOSYSLAN."
----
-<section class="page-intro container"><span class="eyebrow">BIBLIOTECA TÉCNICA</span><h1>Artículos y <em>guías.</em></h1><p class="intro-text">Contenido práctico para comprender redes, telecomunicaciones y buenas prácticas de seguridad informática.</p></section>
-<section class="container section-compact"><div class="search-panel"><label for="article-search">BUSCAR EN LA BIBLIOTECA</label><input id="article-search" type="search" placeholder="Ej. phishing, VLAN, FTTH..." autocomplete="off"><p id="article-search-status" class="search-status" role="status"></p></div><div class="card-grid" id="article-list">{% for post in site.posts %}{% unless post.categories contains 'Noticias' or post.categories contains 'noticias' %}{% include article-card.html post=post %}{% endunless %}{% endfor %}</div><p id="empty-articles" class="empty-state" hidden>No hay artículos que coincidan con tu búsqueda.</p></section>
