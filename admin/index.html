@@ -1,15 +1,81 @@
 ---
 layout: default
 title: Administración
-description: "Panel de publicación de contenido TECNOSYSLAN."
+description: "Administración de herramientas y noticias: crear, consultar, editar y eliminar."
 permalink: /admin/
 ---
-<section class="page-intro container admin-top"><span class="eyebrow">ADMINISTRACIÓN / TECNOSYSLAN</span><h1>Panel de <em>publicación.</em></h1><p class="intro-text">Carga herramientas y noticias desde archivos preparados y publícalas en GitHub Pages tras revisar los cambios.</p></section>
+<section class="page-intro container admin-top"><span class="eyebrow">ADMINISTRACIÓN / TECNOSYSLAN</span><h1>Centro de <em>administración.</em></h1><p class="intro-text">Publica, consulta, edita y elimina herramientas y noticias desde un solo panel conectado a GitHub.</p></section>
 <section class="container section-compact admin-layout">
 <div class="admin-note"><strong>Acceso protegido:</strong> el formulario es público, pero la sesión y las acciones de publicación requieren validación en el servidor de administración. La contraseña no está incluida en este sitio.</div>
 <div class="admin-panel" id="api-settings"><div class="row-between"><h2>Configuración del servidor</h2><span class="admin-tag" id="connection-badge">Sin configurar</span></div><p>Configura el servicio privado de publicación una única vez. Sigue el archivo <code>GUIA_INSTALACION.md</code> del paquete.</p><div class="admin-form"><label for="api-base">URL de tu Cloudflare Worker (HTTPS)</label><input id="api-base" type="url" placeholder="https://tecnosyslan-admin-api.tucuenta.workers.dev" spellcheck="false"><div class="admin-buttons"><button class="button button-ghost" id="save-api" type="button">Guardar dirección</button><button class="button button-ghost" id="test-api" type="button">Comprobar conexión</button></div><p class="label-help">Se guarda únicamente la dirección del Worker en este navegador. Nunca almacenes aquí tokens o contraseñas.</p></div></div>
 <div class="admin-panel" id="login-panel"><div class="row-between"><h2>Iniciar sesión</h2><span class="admin-tag">Solo propietario</span></div><form class="admin-form" id="login-form"><div><label for="admin-user">Usuario</label><input id="admin-user" name="username" type="text" value="mizuri" autocomplete="username" required></div><div><label for="admin-password">Contraseña</label><input id="admin-password" name="password" type="password" autocomplete="current-password" required></div><button class="button button-primary" type="submit">Acceder al panel ↗</button></form><p class="label-help">La contraseña se valida en Cloudflare Worker. Se transmite mediante HTTPS y no se escribe en GitHub.</p></div>
 <div id="workspace" class="hide"><div class="admin-panel row-between"><div><span class="eyebrow">SESIÓN ACTIVA</span><h2>Centro de publicaciones</h2><p>Revisa los títulos, fechas y archivos antes de publicar.</p></div><button class="button button-ghost" id="logout" type="button">Cerrar sesión</button></div>
+<section class="admin-panel" id="manager-panel">
+  <div class="row-between">
+    <div><span class="eyebrow">GESTIÓN DE CONTENIDOS</span><h2>Editar y eliminar publicaciones</h2></div>
+    <button id="manage-refresh" type="button" class="button button-ghost">Actualizar listados</button>
+  </div>
+  <p>Selecciona una publicación creada en el catálogo para editar sus datos o eliminarla. Los cambios se guardan en GitHub y se reflejan tras el despliegue de Pages.</p>
+  <div class="admin-grid">
+    <div class="manage-slot">
+      <h3>Gestionar herramientas</h3>
+      <label for="manage-tool-select">Herramientas publicadas</label>
+      <select id="manage-tool-select"><option value="">Cargando herramientas…</option></select>
+      <div class="admin-buttons manage-actions">
+        <button class="button button-ghost" id="manage-tool-open" type="button">Ver y editar</button>
+        <button class="button button-danger" id="manage-tool-delete" type="button">Eliminar herramienta</button>
+      </div>
+      <p class="label-help" id="manage-tool-count">Solo herramientas agregadas al catálogo dinámico. Las calculadoras integradas se conservan.</p>
+      <form class="admin-form hide manage-editor" id="edit-tool-form">
+        <h4>Editar herramienta</h4>
+        <div><label for="edit-tool-slug">Identificador (no editable)</label><input id="edit-tool-slug" readonly></div>
+        <div><label for="edit-tool-title">Título</label><input id="edit-tool-title" required minlength="5" maxlength="100"></div>
+        <div><label for="edit-tool-description">Descripción</label><textarea id="edit-tool-description" rows="3" required minlength="10" maxlength="240"></textarea></div>
+        <div><label for="edit-tool-category">Categoría</label><select id="edit-tool-category"><option>Redes</option><option>Ciberseguridad</option><option>Telecomunicaciones</option><option>Soporte técnico</option><option>Educación</option></select></div>
+        <div class="file-picker"><label for="edit-tool-files">Reemplazar archivos (opcional)</label><input id="edit-tool-files" type="file" accept=".html,.htm,.js,.css,.svg,.png,.jpg,.jpeg,.webp,.json,.txt,.zip" multiple><p class="label-help">Si no seleccionas archivos, se conservarán los actuales. Si eliges archivos o ZIP, sustituirán todos los anteriores. Se necesita index.html, máximo 12 archivos y 3 MB.</p></div>
+        <label><input id="edit-tool-confirm" type="checkbox" required> Confirmo que revisé los cambios y autorizo su publicación.</label>
+        <div class="admin-buttons"><button type="submit" class="button button-primary">Guardar cambios ↗</button><button id="edit-tool-cancel" type="button" class="button button-ghost">Cancelar</button></div>
+      </form>
+    </div>
+    <div class="manage-slot">
+      <h3>Gestionar noticias</h3>
+      <label for="manage-news-select">Noticias publicadas</label>
+      <select id="manage-news-select"><option value="">Cargando noticias…</option></select>
+      <div class="admin-buttons manage-actions">
+        <button class="button button-ghost" id="manage-news-open" type="button">Ver y editar</button>
+        <button class="button button-danger" id="manage-news-delete" type="button">Eliminar noticia</button>
+      </div>
+      <p class="label-help" id="manage-news-count">Aquí aparecen las noticias de la categoría Noticias, sin afectar a tus artículos técnicos.</p>
+      <form class="admin-form hide manage-editor" id="edit-news-form">
+        <h4>Editar noticia</h4>
+        <div><label for="edit-news-slug">Identificador (no editable)</label><input id="edit-news-slug" readonly></div>
+        <div><label for="edit-news-title">Título</label><input id="edit-news-title" required minlength="6" maxlength="140"></div>
+        <div><label for="edit-news-date">Fecha</label><input id="edit-news-date" type="date" required><p class="label-help">Cambiar esta fecha actualiza la publicación, pero mantiene su enlace.</p></div>
+        <div><label for="edit-news-description">Resumen</label><textarea id="edit-news-description" rows="3" required minlength="10" maxlength="240"></textarea></div>
+        <div><label for="edit-news-source">Enlace de fuente (HTTPS)</label><input id="edit-news-source" type="url" required></div>
+        <div><label for="edit-news-markdown">Contenido de la noticia (Markdown)</label><textarea id="edit-news-markdown" rows="12" required minlength="20" spellcheck="false"></textarea></div>
+        <label><input id="edit-news-confirm" type="checkbox" required> Confirmo que verifiqué la noticia y autorizo los cambios.</label>
+        <div class="admin-buttons"><button type="submit" class="button button-primary">Guardar cambios ↗</button><button id="edit-news-cancel" type="button" class="button button-ghost">Cancelar</button></div>
+      </form>
+    </div>
+  </div>
+</section>
+<style>
+.manage-slot{min-width:0;background:#faf9ff;border:1px solid #e8e3fc;padding:20px;border-radius:17px}
+.manage-slot h3{font-size:18px;margin:0 0 12px;color:#5141aa}
+.manage-slot select{width:100%}
+.manage-slot>label{font-size:12px;font-weight:750;color:#4b466e;display:block;margin-bottom:8px}
+.manage-actions{margin:12px 0 11px}
+.button-danger{background:#fff2f4;color:#9b2646;border-color:#f2bdc8}
+.button-danger:hover{background:#ffe8ec}
+.manage-editor{background:white;border:1px solid #e8e3fc;padding:16px;border-radius:15px;margin-top:16px}
+.manage-editor h4{margin:0 0 4px;font-size:16px}
+.manage-editor input[readonly]{background:#f2f0f9;color:#777089}
+.manage-editor input:not([type="checkbox"]),.manage-editor textarea,.manage-editor select{width:100%}
+.manage-slot .label-help{margin:8px 0}
+@media(max-width:690px){.manage-slot{padding:14px}}
+</style>
+
 <div class="admin-grid">
 <section class="admin-panel"><span class="eyebrow">MÓDULO HERRAMIENTAS</span><h2>Publicar herramienta</h2><p>Sube un archivo HTML independiente, varios archivos de una herramienta o un ZIP. Se publicará en su propia ruta y se añadirá automáticamente al catálogo.</p><form class="admin-form" id="tool-form"><div><label for="tool-title">Título</label><input id="tool-title" required maxlength="100" placeholder="Calculadora de potencia óptica"></div><div><label for="tool-slug">Identificador para URL (sin espacios)</label><input id="tool-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="calculadora-potencia-optica"></div><div><label for="tool-description">Descripción</label><textarea id="tool-description" rows="3" required minlength="10" maxlength="240" placeholder="Explica brevemente qué hace la herramienta"></textarea></div><div><label for="tool-category">Categoría</label><select id="tool-category"><option>Redes</option><option>Ciberseguridad</option><option>Telecomunicaciones</option><option>Soporte técnico</option><option>Educación</option></select></div><div class="file-picker"><label for="tool-files">Archivos .html, .js, .css, .svg, imágenes o .zip</label><input id="tool-files" type="file" accept=".html,.htm,.js,.css,.svg,.png,.jpg,.jpeg,.webp,.json,.txt,.zip" multiple required><p class="label-help">Para varios archivos, selecciónalos juntos o carga un ZIP con index.html. Límite: 12 archivos, 3 MB totales.</p></div><label><input id="tool-confirm" type="checkbox" required> Confirmo que revisé los archivos y autorizo su publicación en mi blog.</label><button class="button button-primary" type="submit">Publicar herramienta ↗</button></form></section>
 <section class="admin-panel"><span class="eyebrow">MÓDULO NOTICIAS</span><h2>Publicar noticia</h2><p>Sube el Markdown preparado y completa su título, resumen, fecha y enlace de la fuente verificable.</p><form class="admin-form" id="news-form"><div><label for="news-title">Título</label><input id="news-title" maxlength="140" required placeholder="Titular de la noticia"></div><div><label for="news-slug">Identificador para URL</label><input id="news-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="noticia-tecnologica"></div><div><label for="news-date">Fecha de publicación</label><input id="news-date" type="date" required></div><div><label for="news-description">Resumen breve</label><textarea id="news-description" rows="3" maxlength="240" minlength="10" required placeholder="Explica la novedad en pocas líneas"></textarea></div><div><label for="news-source">URL de la fuente original (HTTPS)</label><input id="news-source" type="url" required placeholder="https://www.ejemplo.org/noticia"></div><div class="file-picker"><label for="news-file">Archivo Markdown .md</label><input id="news-file" type="file" accept=".md,.markdown,.txt" required><p class="label-help">Puede contener encabezado YAML; el panel generará metadatos uniformes.</p></div><label><input id="news-confirm" type="checkbox" required> Confirmo que verifiqué la información y autorizo la publicación.</label><button class="button button-primary" type="submit">Publicar noticia ↗</button></form></section>

@@ -14,8 +14,8 @@
     const api=checkedApi();const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),40000);
     try{const res=await fetch(api+path,{method:'POST',headers:{'Content-Type':'application/json',...(token?{'Authorization':'Bearer '+token}:{})},body:JSON.stringify(payload),cache:'no-store',signal:controller.signal});const data=await res.json().catch(()=>({error:'Respuesta no válida del servidor.'}));if(!res.ok)throw Error(data.error||('HTTP '+res.status));return data;}finally{clearTimeout(timeout);}
   }
-  $('login-form').onsubmit=async e=>{e.preventDefault();const password=$('admin-password').value;try{status('Comprobando credenciales...');const data=await request('/login',{username:$('admin-user').value,password});session=data.token;sessionStorage.setItem(sessionKey,session);$('admin-password').value='';applyLogin();status('Sesión iniciada. Puedes preparar herramientas y noticias para publicar.');}catch(err){status('Acceso denegado: '+err.message,true);}finally{$('admin-password').value='';}};
-  $('logout').onclick=()=>{session='';sessionStorage.removeItem(sessionKey);applyLogin();status('Sesión cerrada.');};
+  $('login-form').onsubmit=async e=>{e.preventDefault();const password=$('admin-password').value;try{status('Comprobando credenciales...');const data=await request('/login',{username:$('admin-user').value,password});session=data.token;sessionStorage.setItem(sessionKey,session);$('admin-password').value='';applyLogin();status('Sesión iniciada. Cargando publicaciones existentes…');refreshLists().then(()=>status('Sesión iniciada. Listo para publicar, editar o eliminar.'),e=>status('Sesión iniciada. No se pudo cargar el catálogo: '+e.message,true));}catch(err){status('Acceso denegado: '+err.message,true);}finally{$('admin-password').value='';}};
+  $('logout').onclick=()=>{session='';sessionStorage.removeItem(sessionKey);loadedTool=null;loadedNews=null;editForm('tool').classList.add('hide');editForm('news').classList.add('hide');applyLogin();status('Sesión cerrada.');};
   $('clear-status').onclick=()=>status('Panel listo.');
   $('news-date').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
   const slugify=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,65);
@@ -68,5 +68,80 @@
   const showPublished=(data)=>{status('Publicación confirmada en el repositorio. GitHub Pages procesará el despliegue.\nURL prevista: '+data.url+'\nCommit: '+(data.commit||'-'));};
   $('tool-form').onsubmit=async e=>{e.preventDefault();if(!session)return status('Inicia sesión primero.',true);try{status('Preparando los archivos...');const files=await collectFiles($('tool-files').files);status('Enviando '+files.length+' archivo(s) al servidor.');const response=await request('/publish',{type:'tool',title:$('tool-title').value.trim(),slug:$('tool-slug').value.trim(),description:$('tool-description').value.trim(),category:$('tool-category').value,files},session);showPublished(response);$('tool-confirm').checked=false;}catch(err){status('No se pudo publicar: '+err.message,true);}};
   $('news-form').onsubmit=async e=>{e.preventDefault();if(!session)return status('Inicia sesión primero.',true);try{const file=$('news-file').files[0];if(!file)throw Error('Selecciona un archivo Markdown.');if(file.size>200000)throw Error('La noticia debe ocupar menos de 200 KB.');const markdown=await file.text();status('Publicando noticia...');const response=await request('/publish',{type:'news',title:$('news-title').value.trim(),slug:$('news-slug').value.trim(),date:$('news-date').value,description:$('news-description').value.trim(),source_url:$('news-source').value.trim(),markdown},session);showPublished(response);$('news-confirm').checked=false;}catch(err){status('No se pudo publicar: '+err.message,true);}};
+  // Gestión CRUD de contenido publicado. La API exige sesión y comprueba el SHA de cada archivo.
+  let loadedTool=null, loadedNews=null;
+  const selector=t=>$(t==='tool'?'manage-tool-select':'manage-news-select');
+  const editForm=t=>$(t==='tool'?'edit-tool-form':'edit-news-form');
+  function setOptions(select,items,placeholder,previous){
+    select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent=placeholder;select.appendChild(empty);
+    for(const item of items){const option=document.createElement('option');option.value=item.id;option.textContent=(item.title||item.slug)+(item.date?' · '+item.date:'');select.appendChild(option);}
+    if(items.some(item=>item.id===previous))select.value=previous;
+  }
+  async function requestGet(path,params={}){
+    if(!session)throw Error('Inicia sesión para gestionar las publicaciones.');
+    const q=new URLSearchParams(params).toString();const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),40000);
+    try{const res=await fetch(checkedApi()+path+(q?'?'+q:''),{method:'GET',headers:{Authorization:'Bearer '+session},cache:'no-store',signal:controller.signal});const data=await res.json().catch(()=>({error:'Respuesta no válida de Cloudflare.'}));if(!res.ok)throw Error(data.error||('HTTP '+res.status));return data;}finally{clearTimeout(timer);}
+  }
+  async function refreshList(type){
+    const select=selector(type),previous=select.value;
+    select.replaceChildren();const opt=document.createElement('option');opt.textContent='Consultando GitHub…';opt.value='';select.appendChild(opt);
+    const data=await requestGet('/items',{type});
+    setOptions(select,data.items,type==='tool'?'Selecciona una herramienta':'Selecciona una noticia',previous);
+    $(type==='tool'?'manage-tool-count':'manage-news-count').textContent=data.items.length+' publicación(es) disponibles. '+(type==='tool'?'Las calculadoras originales están protegidas.':'Los artículos técnicos no aparecen en esta lista.');
+  }
+  async function refreshLists(){await Promise.all([refreshList('tool'),refreshList('news')]);}
+  $('manage-refresh').onclick=async()=>{if(!session)return status('Inicia sesión primero.',true);try{status('Actualizando listados desde GitHub…');await refreshLists();status('Listados de herramientas y noticias actualizados.');}catch(e){status('No se pudieron cargar los listados: '+e.message,true);}};
+  async function openEditor(type){
+    const id=selector(type).value;if(!id)throw Error('Selecciona una publicación del listado.');
+    status('Cargando información para editar…');const data=await requestGet('/item',{type,id});const item=data.item;
+    if(type==='tool'){
+      loadedTool=item;$('edit-tool-slug').value=item.slug;$('edit-tool-title').value=item.title;$('edit-tool-description').value=item.description;$('edit-tool-category').value=item.category;
+      $('edit-tool-files').value='';$('edit-tool-confirm').checked=false;
+    }else{
+      loadedNews=item;$('edit-news-slug').value=item.slug;$('edit-news-title').value=item.title;$('edit-news-date').value=item.date;$('edit-news-description').value=item.description;$('edit-news-source').value=item.source_url;$('edit-news-markdown').value=item.markdown;
+      $('edit-news-confirm').checked=false;
+    }
+    editForm(type).classList.remove('hide');editForm(type).scrollIntoView({behavior:'smooth',block:'start'});
+    status('Contenido cargado. Modifica los campos y pulsa Guardar cambios cuando estés conforme.');
+  }
+  $('manage-tool-open').onclick=()=>openEditor('tool').catch(e=>status('No se pudo abrir la herramienta: '+e.message,true));
+  $('manage-news-open').onclick=()=>openEditor('news').catch(e=>status('No se pudo abrir la noticia: '+e.message,true));
+  $('edit-tool-cancel').onclick=()=>{editForm('tool').classList.add('hide');loadedTool=null;};
+  $('edit-news-cancel').onclick=()=>{editForm('news').classList.add('hide');loadedNews=null;};
+  $('edit-tool-form').onsubmit=async e=>{
+    e.preventDefault();if(!session||!loadedTool)return status('Selecciona y abre una herramienta primero.',true);
+    try{
+      status('Preparando actualización de herramienta…');const replace_files=$('edit-tool-files').files.length>0;
+      const files=replace_files?await collectFiles($('edit-tool-files').files):undefined;
+      const payload={type:'tool',id:loadedTool.id,expected_sha:loadedTool.sha,slug:loadedTool.slug,title:$('edit-tool-title').value.trim(),description:$('edit-tool-description').value.trim(),category:$('edit-tool-category').value,replace_files};if(replace_files)payload.files=files;
+      const result=await request('/update',payload,session);showPublished(result);
+      loadedTool=null;editForm('tool').classList.add('hide');await refreshList('tool').catch(()=>{});
+    }catch(error){status('No se pudo editar la herramienta: '+error.message,true);}
+  };
+  $('edit-news-form').onsubmit=async e=>{
+    e.preventDefault();if(!session||!loadedNews)return status('Selecciona y abre una noticia primero.',true);
+    try{
+      status('Guardando cambios en la noticia…');const payload={type:'news',id:loadedNews.id,expected_sha:loadedNews.sha,slug:loadedNews.slug,title:$('edit-news-title').value.trim(),date:$('edit-news-date').value,description:$('edit-news-description').value.trim(),source_url:$('edit-news-source').value.trim(),markdown:$('edit-news-markdown').value};
+      const result=await request('/update',payload,session);showPublished(result);
+      loadedNews=null;editForm('news').classList.add('hide');await refreshList('news').catch(()=>{});
+    }catch(error){status('No se pudo editar la noticia: '+error.message,true);}
+  };
+  async function deleteSelected(type){
+    if(!session)throw Error('Inicia sesión primero.');const id=selector(type).value;if(!id)throw Error('Selecciona una publicación para eliminar.');
+    const noun=type==='tool'?'herramienta':'noticia';
+    if(!window.confirm('Vas a ELIMINAR la '+noun+' «'+id+'» del sitio público.\n\nEsta acción quitará su contenido del catálogo tras el despliegue. ¿Continuar?'))return;
+    const typed=window.prompt('Confirmación de seguridad. Escribe ELIMINAR para borrar «'+id+'»:');if(typed!=='ELIMINAR')return status('Eliminación cancelada.');
+    status('Comprobando el estado de GitHub antes de eliminar…');
+    const current=(await requestGet('/item',{type,id})).item;
+    const result=await request('/delete',{type,id,expected_sha:current.sha},session);
+    loadedTool=type==='tool'?null:loadedTool;loadedNews=type==='news'?null:loadedNews;
+    editForm(type).classList.add('hide');
+    status('Eliminación confirmada mediante commit '+result.commit+'.\nArchivos eliminados: '+result.deleted+'.\nGitHub Pages actualizará el blog al terminar su despliegue.');
+    await refreshList(type).catch(()=>{});
+  }
+  $('manage-tool-delete').onclick=()=>deleteSelected('tool').catch(e=>status('No se pudo eliminar la herramienta: '+e.message,true));
+  $('manage-news-delete').onclick=()=>deleteSelected('news').catch(e=>status('No se pudo eliminar la noticia: '+e.message,true));
+
   applyLogin();
+  if(session)refreshLists().catch(e=>status('Tu sesión está activa, pero no se pudo actualizar el catálogo: '+e.message,true));
 })();
