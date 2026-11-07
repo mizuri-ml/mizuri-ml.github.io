@@ -1,8 +1,0 @@
----
-layout: default
-title: Noticias
-description: "Noticias tecnológicas y de ciberseguridad con enlaces a fuentes verificables."
-permalink: /noticias/
----
-<section class="page-intro container"><span class="eyebrow">MÓDULO 02 / ACTUALIDAD</span><h1>Noticias de <em>tecnología.</em></h1><p class="intro-text">Actualidad en ciberseguridad, telecomunicaciones y redes. Cada publicación debe incluir fecha y referencias verificables.</p></section>
-<section class="container section-compact"><div class="search-panel"><label for="article-search">BUSCAR NOTICIAS</label><input id="article-search" type="search" placeholder="Buscar temas, empresas, amenazas..."><p id="article-search-status" class="search-status" role="status"></p></div><div class="card-grid" id="article-list">{% assign noticias_count = 0 %}{% for post in site.posts %}{% if post.categories contains 'Noticias' or post.categories contains 'noticias' %}{% assign noticias_count = noticias_count | plus: 1 %}{% include article-card.html post=post %}{% endif %}{% endfor %}</div>{% if noticias_count == 0 %}<div class="empty-state">Todavía no se han publicado noticias. Podrás subir archivos Markdown desde el panel de administración cuando esté configurado.</div>{% endif %}<p id="empty-articles" class="empty-state" hidden>No hay noticias que coincidan con tu búsqueda.</p></section>
