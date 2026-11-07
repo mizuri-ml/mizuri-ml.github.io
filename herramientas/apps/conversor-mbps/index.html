@@ -1,0 +1,50 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Laboratorio TECNOSYSLAN</title><style>body{margin:0;background:#f7f7ff;font:16px system-ui,Segoe UI,sans-serif;line-height:1.5;color:#24214b}a{color:#6150d5}button,input{font:inherit}</style></head><body><style>
+  .tsl-conv{max-width:780px;margin:2rem auto;padding:1.75rem;border:1px solid #256879;border-radius:18px;background:#102530;color:#eef7f9;font-family:inherit}
+  .tsl-conv h1{color:#61ded1;margin:0 0 .65rem}
+  .tsl-conv p{line-height:1.6}
+  .tsl-conv label{display:block;font-weight:650;margin:.8rem 0 .35rem}
+  .tsl-conv input{width:100%;box-sizing:border-box;padding:.85rem;border:1px solid #7b9ca5;border-radius:9px;background:#f8ffff;color:#102530;font-size:1rem}
+  .tsl-conv button{margin-top:1.1rem;padding:.8rem 1.3rem;border:0;border-radius:9px;background:#61ded1;color:#09212d;font-size:1rem;font-weight:700;cursor:pointer}
+  .tsl-conv button:hover{background:#8befdf}
+  .tsl-conv .resultado{margin-top:1.2rem;padding:1rem;background:#193846;border-radius:10px;min-height:2.5em}
+  .tsl-conv .nota{font-size:.9rem;color:#c3d6dc}
+</style>
+<section class="tsl-conv" aria-labelledby="tsl-conv-titulo">
+  <h1 id="tsl-conv-titulo">Conversor de velocidad de red</h1>
+  <p>Convierte Mbps a MB/s y estima el tiempo de transferencia de un archivo, en condiciones ideales.</p>
+  <form id="tsl-conv-form">
+    <label for="tsl-mbps">Velocidad de conexión (Mbps)</label>
+    <input id="tsl-mbps" name="mbps" type="number" inputmode="decimal" min="0.01" step="any" value="100" required>
+    <label for="tsl-gb">Tamaño del archivo (GB decimales)</label>
+    <input id="tsl-gb" name="gb" type="number" inputmode="decimal" min="0.01" step="any" value="1" required>
+    <button type="submit">Calcular</button>
+  </form>
+  <div id="tsl-resultado" class="resultado" role="status" aria-live="polite">Introduce los datos y selecciona «Calcular».</div>
+  <p class="nota">Cálculo teórico: 8 bits = 1 byte, 1 GB = 1.000 MB. La velocidad efectiva puede ser menor por sobrecarga de protocolos, Wi-Fi, congestión y servidores.</p>
+  <p><a href="/herramientas/" style="color:#61ded1">Volver a herramientas</a></p>
+</section>
+<script>
+(function () {
+  'use strict';
+  const formulario = document.getElementById('tsl-conv-form');
+  const resultado = document.getElementById('tsl-resultado');
+  formulario.addEventListener('submit', function (evento) {
+    evento.preventDefault();
+    const mbps = Number(document.getElementById('tsl-mbps').value);
+    const gb = Number(document.getElementById('tsl-gb').value);
+    if (!Number.isFinite(mbps) || !Number.isFinite(gb) || mbps <= 0 || gb <= 0) {
+      resultado.textContent = 'Introduce valores positivos y válidos.';
+      return;
+    }
+    const megabytesPorSegundo = mbps / 8;
+    const segundos = gb * 8000 / mbps;
+    const segundosTotales = Math.round(segundos);
+    const horas = Math.floor(segundosTotales / 3600);
+    const minutos = Math.floor((segundosTotales % 3600) / 60);
+    const segundosRestantes = segundosTotales % 60;
+    const tiempo = horas > 0 ? `${horas} h ${minutos} min ${segundosRestantes} s` : `${minutos} min ${segundosRestantes} s`;
+    resultado.textContent = `Velocidad teórica: ${megabytesPorSegundo.toLocaleString('es-EC', {maximumFractionDigits: 2})} MB/s. Tiempo aproximado de descarga: ${tiempo}.`;
+  });
+}());
+</script>
+</body></html>
