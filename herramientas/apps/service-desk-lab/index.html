@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101936">
+<meta name="description" content="TECNOSYSLAN Service Desk Simulator Pro: capacitación ITSM con tickets, SLA, escalamiento, clientes, inventario, SOC, FTTH y reportes. Datos exclusivamente ficticios.">
+<title>Service Desk Simulator Pro | TECNOSYSLAN</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app-shell" id="appShell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand" aria-label="TECNOSYSLAN"><div class="brand-icon">T</div><div><strong>TECNO<span>SYSLAN</span></strong><small>SERVICE DESK SIMULATOR <b>PRO</b></small></div></div>
+    <div class="tenant"><span class="online-dot"></span><div><strong>Centro de operaciones</strong><small>Entorno educativo · DEMO</small></div></div>
+    <nav id="sideNav" aria-label="Módulos">
+      <span class="nav-caption">OPERACIONES</span>
+      <button data-nav="dashboard" class="nav-item active"><span class="nav-ico">▦</span> Panel general</button>
+      <button data-nav="tickets" class="nav-item"><span class="nav-ico">▤</span> Gestión de tickets <b id="sideCount">0</b></button>
+      <button data-nav="sla" class="nav-item"><span class="nav-ico">◷</span> SLA y escalamiento</button>
+      <button data-nav="labs" class="nav-item"><span class="nav-ico">⬡</span> Laboratorios guiados</button>
+      <span class="nav-caption">RECURSOS</span>
+      <button data-nav="customers" class="nav-item"><span class="nav-ico">♧</span> Clientes</button>
+      <button data-nav="assets" class="nav-item"><span class="nav-ico">▧</span> Inventario / CMDB</button>
+      <button data-nav="team" class="nav-item"><span class="nav-ico">♙</span> Técnicos y equipos</button>
+      <button data-nav="kb" class="nav-item"><span class="nav-ico">▤</span> Base de conocimiento</button>
+      <span class="nav-caption">CONTROL</span>
+      <button data-nav="reports" class="nav-item"><span class="nav-ico">▥</span> Informes y KPI</button>
+      <button data-nav="audit" class="nav-item"><span class="nav-ico">☷</span> Auditoría</button>
+      <button data-nav="settings" class="nav-item"><span class="nav-ico">⚙</span> Configuración</button>
+    </nav>
+    <div class="sidebar-bottom"><div class="security-note"><strong>SIMULADOR LOCAL</strong><p>Los usuarios, IP, empresas y tickets son ficticios. No envía solicitudes ni guarda datos en un servidor.</p></div><a target="_blank" rel="noopener noreferrer" href="https://mizuri-ml.github.io/">↗ Volver al blog TECNOSYSLAN</a></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <button type="button" id="menuToggle" class="icon-btn mobile-menu" aria-label="Mostrar u ocultar menú">☰</button>
+      <div class="breadcrumb"><span>TECNOSYSLAN</span><span>/</span><strong id="headerTitle">Panel general</strong></div>
+      <div class="top-actions">
+        <span class="sim-badge" title="Entorno de demostración">● DEMO</span>
+        <button class="time-chip" type="button" data-action="clock" title="Avanzar el reloj simulado"><span class="time-icon">◷</span><span id="simTime"></span><span class="time-plus">+ tiempo</span></button>
+        <select id="roleSelect" aria-label="Cambiar rol simulado"><option value="admin">Administrador</option><option value="supervisor">Supervisor</option><option value="N1">Técnico N1</option><option value="N2">Especialista N2</option><option value="N3">Especialista N3</option><option value="cliente">Cliente demo</option></select>
+        <button id="themeBtn" class="icon-btn" aria-label="Cambiar tema" title="Tema claro/oscuro">◐</button>
+      </div>
+    </header>
+    <main class="content" id="mainContent" tabindex="-1"></main>
+    <footer class="main-footer">TECNOSYSLAN · Service Desk Simulator Pro <span>ITSM educativo · sin conexiones reales · los SLA son configurables</span></footer>
+  </div>
+</div>
+<div id="modalRoot"></div>
+<div id="toastRoot" role="status" aria-live="polite"></div>
+<script src="./data.js" defer></script>
+<script src="./app.js" defer></script>
+</body>
+</html>
